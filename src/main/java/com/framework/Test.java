@@ -1,6 +1,6 @@
 package com.framework;
 
-import com.demo.ctrl.Index;
+import demo.ctrl.Index;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

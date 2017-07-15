@@ -19,7 +19,7 @@ public class ClassHelper {
     private static final Set<Class<?>> CLASS_SET;
     static {
         System.out.println("ClassHelper helper");
-        CLASS_SET = ClassUtils.getClass("com.demo");
+        CLASS_SET = ClassUtils.getClass("demo");
     }
 
     public static Set<Class<?>> getClassSet() {

@@ -13,7 +13,8 @@ import java.util.Properties;
  * To change this template use File | Settings | File Templates.
  */
 public class ConfigHelper {
-    private static final Properties CONFIG_PROPS = PropsUtil.loadProps("config.properties");
+    private static final Properties  CONFIG_PROPS =  PropsUtil.loadProps("config.properties");
+
     public  static String getAppBasePackage() {
         return PropsUtil.getString(CONFIG_PROPS, Constant.APP_BASE_PACKAGE);
     }

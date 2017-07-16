@@ -16,9 +16,6 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 public class ClassUtils {
-    static {
-        System.out.println("Clas UTIL");
-    }
 
     private static ClassLoader getClassLoader() {
         return Thread.currentThread().getContextClassLoader();

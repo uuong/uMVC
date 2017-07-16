@@ -18,8 +18,7 @@ import java.util.Set;
 public class ClassHelper {
     private static final Set<Class<?>> CLASS_SET;
     static {
-        System.out.println("ClassHelper helper");
-        CLASS_SET = ClassUtils.getClass("demo");
+        CLASS_SET = ClassUtils.getClass(ConfigHelper.getAppBasePackage());
     }
 
     public static Set<Class<?>> getClassSet() {

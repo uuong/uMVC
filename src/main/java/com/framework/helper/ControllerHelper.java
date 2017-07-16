@@ -20,7 +20,7 @@ public class ControllerHelper {
     private static Map<Request, Handler> actionMap = new HashMap<>();
 
     static {
-        System.out.println("action helper");
+
         Set<Class<?>> classSet = ClassHelper.getController();
         for (Class<?> item : classSet) {
             Method[] methods = item.getDeclaredMethods();

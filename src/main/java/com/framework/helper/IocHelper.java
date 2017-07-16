@@ -15,7 +15,6 @@ import java.util.Map;
  */
 public class IocHelper {
     static {
-        System.out.println("IocHelper helper");
         Map<Class<?>, Object> beanMap = BeanContainer.getBeanMap();
         for (Map.Entry<Class<?>, Object> entry : beanMap.entrySet()) {
             Class<?> beanClass = entry.getKey();

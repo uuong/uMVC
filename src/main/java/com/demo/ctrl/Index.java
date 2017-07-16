@@ -6,6 +6,10 @@ import com.framework.annotation.Action;
 import com.framework.annotation.AutoWired;
 import com.framework.annotation.Controller;
 import com.framework.bean.Data;
+import com.framework.bean.Param;
+import com.framework.bean.View;
+
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,31 +25,30 @@ public class Index {
 
     @Action(path = "/index",method = RequestMethod.GET)
     public Data index() {
-        System.out.println("Index . index");
         if (indexService != null) {
             String list = indexService.ff();
             return new Data(list);
         }
         return new Data("not");
     }
-
-    @Action(path = "/in",method = RequestMethod.GET)
-    public Data indexA(String name) {
-        System.out.println("innnnnnnnnnnnnnn");
-        if (indexService != null) {
-            return new Data(name);
-        }
-        return new Data("not");
+    @Action(path = "/get",method = RequestMethod.GET)
+    public View getView() {
+        View view = new View("hello.jsp");
+        view.addModel("list","132432");
+        return view;
     }
 
+    @Action(path = "/re",method = RequestMethod.GET)
+    public View testRe() {
+        return new View("/index");
+    }
 
-
-    public void ff() {
+    @Action(path = "/in",method = RequestMethod.GET)
+    public Data indexA(Param param) {
+        Map<String,Object> map = param.getParamMap();
         if (indexService != null) {
-            indexService.ff();
-        } else {
-            System.out.println("index  is not");
+            return new Data(map);
         }
-
+        return new Data("not");
     }
 }

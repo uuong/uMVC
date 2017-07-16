@@ -21,7 +21,6 @@ public class BeanContainer {
     private static final Map<Class<?>, Object> BEAN_MAP = new HashMap<>();
 
     static {
-        System.out.println("BeanContainer helper");
         Set<Class<?>> classSet = ClassHelper.getAll();
         for (Class<?> aClass : classSet) {
                 Object instance = BeanFactory.newInstance(aClass);

@@ -1,11 +1,16 @@
 package com.framework;
 
 import com.framework.bean.*;
+import com.framework.helper.AopHelper;
+import com.framework.helper.ConfigHelper;
 import com.framework.helper.ControllerHelper;
 import com.framework.helper.IocHelper;
 import com.framework.util.*;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRegistration;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -27,27 +32,29 @@ import java.util.Map;
 @WebServlet(urlPatterns = "/*", loadOnStartup = 0)
 public class DispatcherServlet extends HttpServlet {
     @Override
-    public void init() throws ServletException {
+    public void init(ServletConfig servletConfig) throws ServletException {
+        ServletContext servletContext = servletConfig.getServletContext();
 
-        System.out.println("init");
+        ServletRegistration jspServlet = servletContext.getServletRegistration("jsp");
+        jspServlet.addMapping(ConfigHelper.getAppJspPath() + "*");
+
+        ServletRegistration defaultServlet = servletContext.getServletRegistration("default");
+        defaultServlet.addMapping(ConfigHelper.getAppAssetPath() + "*");
+
+
         try {
+            Class.forName(AopHelper.class.getName());
             Class.forName(IocHelper.class.getName());
+
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-
+        System.out.println("init");
     }
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        //String requestMethod = req.getMethod().toLowerCase();
-        //String url = req.getRequestURI();
-        //String contextPath = req.getContextPath();
-        //String requestPath = null;
-        //if (contextPath != null && contextPath.length() > 0) {
-        //    requestPath = url.substring(contextPath.length());
-        //}
         String requestMethod = req.getMethod().toLowerCase();
 
         String url = req.getRequestURI();
@@ -85,28 +92,47 @@ public class DispatcherServlet extends HttpServlet {
                     }
                 }
             }
+            //陷入误区
+            //只关注调用 不知可以改变被调用方法参数类型
+            //被spring 框架误导
+
             Param param = new Param(paramMap);
             Object result;
             if (param.isEmpty()) {
                 result = BeanFactory.invokeMethod(object, method);
             } else {
-                Object s = paramMap.get("name");
-                System.out.println();
-                result = BeanFactory.invokeMethod(object, method, s);
+                result = BeanFactory.invokeMethod(object, method, param);
+            }
+            if (result instanceof View) {
+                View view = (View) result;
+                String path = view.getPath();
+                if (StringUtil.isNotEmpty(path)) {
+                    //转发
+                    if (path.startsWith("/")) {
+                        resp.sendRedirect(req.getContextPath() + path);
+                    } else {
+                        Map<String, Object> map = view.getModel();
+                        for (Map.Entry<String, Object> entry : map.entrySet()) {
+                            req.setAttribute(entry.getKey(),entry.getValue());
+                        }
+                        req.getRequestDispatcher(ConfigHelper.getAppJspPath() + path).forward(req, resp);
+                    }
+                }
+            } else {
+                Data data = (Data) result;
+                Object model = data.getModel();
+                if (model != null) {
+                    resp.setContentType("application/json");
+                    resp.setCharacterEncoding("UTF-8");
+                    PrintWriter writer = resp.getWriter();
+                    String json = JsonUtil.toJson(model);
+                    writer.write(json);
+                    writer.flush();
+                    writer.close();
+                }
             }
 
 
-            Data data = (Data) result;
-            Object model = data.getModel();
-            if (model != null) {
-                resp.setContentType("application/json");
-                resp.setCharacterEncoding("UTF-8");
-                PrintWriter writer = resp.getWriter();
-                String json = JsonUtil.toJson(model);
-                writer.write(json);
-                writer.flush();
-                writer.close();
-            }
         }
     }
 

@@ -1,10 +1,10 @@
-package com.framework.proxy.impl;
+package com.demo.ctrl;
 
 import com.framework.annotation.Aspect;
 import com.framework.annotation.Controller;
 import com.framework.proxy.AspectProxy;
+import com.framework.util.LogUtil;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 
@@ -17,7 +17,7 @@ import java.lang.reflect.Method;
  */
 @Aspect(Controller.class)
 public class ControllerAspect extends AspectProxy {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ControllerAspect.class);
+    private static final Logger LOGGER = LogUtil.get();
     private long begin;
 
     @Override
